@@ -6,11 +6,15 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load local configuration file if present (ignored by Git for secrets management)
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 // Add services to the container.
 builder.Services.AddControllers();
 
 // Add PostgreSQL DbContext with fallback to SQLite for local development
-var connectionString = builder.Configuration.GetConnectionString("SupabaseConnection");
+var connectionString = builder.Configuration.GetConnectionString("SupabaseConnection")
+    ?? Environment.GetEnvironmentVariable("SUPABASE_CONNECTION_STRING");
 bool useSqlite = string.IsNullOrEmpty(connectionString) || connectionString.Contains("YOUR_SUPABASE_HOST") || connectionString.Contains("YOUR_PASSWORD");
 
 builder.Services.AddDbContext<AppDbContext>(options =>

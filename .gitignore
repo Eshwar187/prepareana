@@ -1,0 +1,40 @@
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET / MSBuild
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.dll
+*.exe
+*.pdb
+*.suo
+*.user
+*.sln.docstates
+*artifacts.xml
+*.log
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+.env
+.env.*
+!.env.example
+
+# Databases / SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Local configurations (keep credentials here)
+appsettings.Local.json
+appsettings.local.json
+appsettings.Development.json
