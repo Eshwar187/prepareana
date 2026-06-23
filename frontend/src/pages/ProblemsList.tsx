@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, Play, CheckCircle2, Circle } from 'lucide-react';
+import { Search, Play, CheckCircle2, Circle, Star, Brain, ArrowRight, Activity } from 'lucide-react';
 
 interface Problem {
   id: string;
@@ -57,7 +57,7 @@ export default function ProblemsList({ onSelectProblem, currentUserEmail }: Prob
         ]);
         setLoading(false);
       });
-  }, []);
+  }, [currentUserEmail]);
 
   if (loading) {
     return (
@@ -82,119 +82,169 @@ export default function ProblemsList({ onSelectProblem, currentUserEmail }: Prob
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       
+      {/* Inline styles for custom HUD elements */}
+      <style>{`
+        .filter-chip {
+          padding: 6px 14px;
+          border-radius: 20px;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          color: var(--text-muted);
+          font-size: 11px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .filter-chip:hover {
+          background: rgba(255, 255, 255, 0.05);
+          color: #fff;
+        }
+        .filter-chip.active {
+          background: rgba(99, 102, 241, 0.1);
+          border-color: rgba(99, 102, 241, 0.25);
+          color: #6366f1;
+          box-shadow: 0 0 10px rgba(99, 102, 241, 0.05);
+        }
+        .problem-row {
+          border-bottom: 1px solid rgba(255,255,255,0.03);
+          transition: all 0.2s;
+        }
+        .problem-row:hover {
+          background: rgba(255, 255, 255, 0.015);
+        }
+        .action-button-glow {
+          padding: 6px 12px;
+          font-size: 11px;
+          font-weight: 700;
+          border-radius: 6px;
+          cursor: pointer;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          color: #fff;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.2s;
+        }
+        .action-button-glow:hover {
+          background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+          border-color: rgba(99, 102, 241, 0.3);
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+      `}</style>
+
       {/* Page Header */}
-      <div>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', marginBottom: '0.25rem' }}>DSA Practice Arena</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Solve curated interview questions, compiler execution tests, and test-case verification.</p>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="glass-panel" style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: '1rem',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0.85rem 1.25rem',
-        background: '#18181b',
-        border: '1px solid var(--border-color)',
-        borderRadius: '0.5rem'
-      }}>
-        {/* Search */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#09090b', padding: '0.45rem 1rem', borderRadius: '0.375rem', border: '1px solid var(--border-color)', minWidth: '280px' }}>
-          <Search size={14} style={{ color: 'var(--text-muted)' }} />
-          <input
-            type="text"
-            placeholder="Search problems..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ background: 'none', border: 'none', color: '#fff', outline: 'none', width: '100%', fontSize: '0.85rem' }}
-          />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '1.25rem' }}>
+        <div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 850, letterSpacing: '-0.03em', color: '#fff', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Brain size={24} style={{ color: 'var(--primary)' }} /> DSA Practice Arena
+          </h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>Solve curated interview questions, compile live solutions, and verify tests.</p>
         </div>
-
-        {/* Filters */}
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-          {/* Difficulty */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Difficulty:</span>
-            <select
-              value={selectedDifficulty}
-              onChange={(e) => setSelectedDifficulty(e.target.value)}
-              style={{ background: '#09090b', color: '#fff', border: '1px solid var(--border-color)', padding: '0.4rem 0.75rem', borderRadius: '0.375rem', outline: 'none', fontSize: '0.8rem' }}
-            >
-              <option value="All">All</option>
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-            </select>
-          </div>
-
-          {/* Category */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Category:</span>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              style={{ background: '#09090b', color: '#fff', border: '1px solid var(--border-color)', padding: '0.4rem 0.75rem', borderRadius: '0.375rem', outline: 'none', fontSize: '0.8rem' }}
-            >
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255, 255, 255, 0.02)', padding: '6px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)', fontSize: '0.75rem' }}>
+          <Activity size={12} color="#10b981" />
+          <span style={{ color: 'var(--text-muted)' }}>Progress: <strong style={{ color: '#fff' }}>{solvedProblemIds.size}</strong> / {problems.length} solved</span>
         </div>
       </div>
 
-      {/* Problems Grid / Table */}
-      <div className="glass-panel" style={{ padding: '0', overflow: 'hidden', background: '#18181b', border: '1px solid var(--border-color)', borderRadius: '0.5rem' }}>
+      {/* Filter & Search Bar */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        
+        {/* Row 1: Search & Difficulty Chips */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Search */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(0,0,0,0.3)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', minWidth: '320px', transition: 'border-color 0.2s' }}
+               onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.4)'}
+               onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}>
+            <Search size={14} style={{ color: 'var(--text-muted)' }} />
+            <input
+              type="text"
+              placeholder="Search by title or topic..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ background: 'none', border: 'none', color: '#fff', outline: 'none', width: '100%', fontSize: '0.825rem' }}
+            />
+          </div>
+
+          {/* Difficulty Chips */}
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {['All', 'Easy', 'Medium', 'Hard'].map((diff) => (
+              <button
+                key={diff}
+                className={`filter-chip ${selectedDifficulty === diff ? 'active' : ''}`}
+                onClick={() => setSelectedDifficulty(diff)}
+              >
+                {diff}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 2: Category Chips */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', borderTop: '1px dashed rgba(255,255,255,0.03)', paddingTop: '0.75rem' }}>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              className={`filter-chip ${selectedCategory === cat ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat)}
+              style={{ fontSize: '10px', padding: '4px 10px' }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Problems Matrix Table */}
+      <div className="glass-panel" style={{ padding: '0', overflow: 'hidden', background: 'rgba(14, 14, 18, 0.7)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '1rem', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--border-color)', background: '#18181b' }}>
-              <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.75rem', width: '80px' }}>Status</th>
-              <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.75rem' }}>Title</th>
-              <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.75rem' }}>Category</th>
-              <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.75rem' }}>Difficulty</th>
-              <th style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.75rem', textAlign: 'right', width: '120px' }}>Action</th>
+            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: 'rgba(255,255,255,0.015)' }}>
+              <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.75rem', width: '80px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Status</th>
+              <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Problem Title</th>
+              <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</th>
+              <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', width: '120px' }}>Difficulty</th>
+              <th style={{ padding: '1rem 1.25rem', color: 'var(--text-muted)', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'right', width: '140px' }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {filteredProblems.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                  No problems match the selected filters.
+                <td colSpan={5} style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                  No problems match the active filter criteria.
                 </td>
               </tr>
             ) : (
               filteredProblems.map((p) => {
                 const isSolved = solvedProblemIds.has(p.id);
                 return (
-                  <tr key={p.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.15s' }}>
-                    <td style={{ padding: '0.85rem 1.25rem' }}>
+                  <tr key={p.id} className="problem-row">
+                    <td style={{ padding: '0.9rem 1.25rem' }}>
                       {isSolved ? (
-                        <CheckCircle2 size={16} style={{ color: 'var(--success)' }} />
+                        <CheckCircle2 size={15} style={{ color: 'var(--success)' }} />
                       ) : (
-                        <Circle size={16} style={{ color: 'var(--text-muted)', opacity: 0.4 }} />
+                        <Circle size={15} style={{ color: 'var(--text-muted)', opacity: 0.3 }} />
                       )}
                     </td>
-                    <td style={{ padding: '0.85rem 1.25rem', fontWeight: 500, fontSize: '0.875rem' }}>
+                    <td style={{ padding: '0.9rem 1.25rem', fontWeight: 600, fontSize: '0.85rem' }}>
                       <span 
                         onClick={() => onSelectProblem(p.id)} 
                         style={{ cursor: 'pointer', transition: 'color 0.15s', color: '#fff' }}
-                        onMouseOver={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                        onMouseOver={(e) => e.currentTarget.style.color = '#6366f1'}
                         onMouseOut={(e) => e.currentTarget.style.color = '#fff'}
                       >
                         {p.title}
                       </span>
                     </td>
-                    <td style={{ padding: '0.85rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>{p.category}</td>
-                    <td style={{ padding: '0.85rem 1.25rem' }}>
-                      <span className={`difficulty-badge difficulty-${p.difficulty.toLowerCase()}`}>
+                    <td style={{ padding: '0.9rem 1.25rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>{p.category}</td>
+                    <td style={{ padding: '0.9rem 1.25rem' }}>
+                      <span className={`difficulty-badge difficulty-${p.difficulty.toLowerCase()}`} style={{ fontSize: '9px', fontWeight: 800, padding: '2px 8px', borderRadius: '4px' }}>
                         {p.difficulty}
                       </span>
                     </td>
-                    <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
-                      <button className="btn btn-secondary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }} onClick={() => onSelectProblem(p.id)}>
-                        <Play size={10} style={{ fill: 'currentColor' }} /> Solve
+                    <td style={{ padding: '0.9rem 1.25rem', textAlign: 'right' }}>
+                      <button className="action-button-glow" onClick={() => onSelectProblem(p.id)}>
+                        Solve <ArrowRight size={11} />
                       </button>
                     </td>
                   </tr>

@@ -193,11 +193,20 @@ namespace PrepArena.Api.Controllers
 
             var totalProblems = await _context.Problems.CountAsync();
 
-            var querySubmissions = _context.Submissions.AsQueryable();
-            if (!string.IsNullOrEmpty(emailFilter))
+            if (string.IsNullOrEmpty(emailFilter))
             {
-                querySubmissions = querySubmissions.Where(s => s.UserEmail.ToLower() == emailFilter);
+                return Ok(new
+                {
+                    totalProblems,
+                    solvedProblems = 0,
+                    recentSubmissions = new List<object>(),
+                    solvedDifficulty = new List<object>(),
+                    streak = 0,
+                    activeDates = new List<string>()
+                });
             }
+
+            var querySubmissions = _context.Submissions.Where(s => s.UserEmail.ToLower() == emailFilter);
 
             var solvedProblems = await querySubmissions
                 .Where(s => s.Status == "Accepted")
@@ -210,6 +219,37 @@ namespace PrepArena.Api.Controllers
                 .Take(10)
                 .ToListAsync();
 
+            // Calculate active streak
+            var submissionDates = await querySubmissions
+                .Select(s => s.SubmittedAt.Date)
+                .Distinct()
+                .OrderByDescending(d => d)
+                .ToListAsync();
+
+            int streak = 0;
+            if (submissionDates.Any())
+            {
+                var today = DateTime.Today;
+                var yesterday = today.AddDays(-1);
+                var expected = submissionDates[0];
+                if (expected == today || expected == yesterday)
+                {
+                    streak = 1;
+                    for (int i = 1; i < submissionDates.Count; i++)
+                    {
+                        if (submissionDates[i] == expected.AddDays(-1))
+                        {
+                            streak++;
+                            expected = submissionDates[i];
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
             // Calculate difficulty distribution
             var difficulties = await querySubmissions
                 .Where(s => s.Status == "Accepted")
@@ -219,12 +259,43 @@ namespace PrepArena.Api.Controllers
                 .Select(g => new { Difficulty = g.Key, Count = g.Count() })
                 .ToListAsync();
 
+            // Calculate global rank
+            var allUsersSolved = await _context.Submissions
+                .Where(s => s.Status == "Accepted")
+                .GroupBy(s => s.UserEmail)
+                .Select(g => new
+                {
+                    Email = g.Key,
+                    SolvedCount = g.Select(s => s.ProblemId).Distinct().Count(),
+                    EarliestSub = g.Min(s => s.SubmittedAt)
+                })
+                .OrderByDescending(x => x.SolvedCount)
+                .ThenBy(x => x.EarliestSub)
+                .ToListAsync();
+
+            int rank = 1;
+            for (int i = 0; i < allUsersSolved.Count; i++)
+            {
+                if (allUsersSolved[i].Email.ToLower() == emailFilter)
+                {
+                    rank = i + 1;
+                    break;
+                }
+            }
+            if (!allUsersSolved.Any(x => x.Email.ToLower() == emailFilter))
+            {
+                rank = allUsersSolved.Count + 1;
+            }
+
             return Ok(new
             {
                 totalProblems,
                 solvedProblems,
                 recentSubmissions = submissions,
-                solvedDifficulty = difficulties
+                solvedDifficulty = difficulties,
+                streak,
+                activeDates = submissionDates.Select(d => d.ToString("yyyy-MM-dd")).ToList(),
+                rank
             });
         }
     }

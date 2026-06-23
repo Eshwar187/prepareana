@@ -7,14 +7,16 @@ import CodingWorkspace from './pages/CodingWorkspace';
 import InterviewPrep from './pages/InterviewPrep';
 import Roadmap from './pages/Roadmap';
 import AdminPanel from './pages/AdminPanel';
+import Leaderboard from './pages/Leaderboard';
+import PrepHub from './pages/PrepHub';
 import { 
   Terminal, Flame, LogOut, User as UserIcon, 
   MessageCircle, Mail, 
-  MapPin, ChevronUp, X, Send, Check 
+  MapPin, ChevronUp, X, Send, Check,
+  LayoutDashboard, Map, Code2, Video, Shield,
+  ChevronLeft, ChevronRight, Trophy
 } from 'lucide-react';
-
-
-type Page = 'landing' | 'auth' | 'dashboard' | 'problems' | 'workspace' | 'interview' | 'roadmap' | 'admin';
+type Page = 'landing' | 'auth' | 'dashboard' | 'problems' | 'workspace' | 'interview' | 'roadmap' | 'admin' | 'leaderboard' | 'prephub';
 type ModalType = 'privacy' | 'terms' | 'contact' | null;
 
 interface User {
@@ -27,6 +29,33 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [activeProblemId, setActiveProblemId] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [userStreak, setUserStreak] = useState<number>(0);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Auto-collapse sidebar in workspace to save space
+  useEffect(() => {
+    if (currentPage === 'workspace') {
+      setIsSidebarCollapsed(true);
+    }
+  }, [currentPage]);
+
+  // Load real streak
+  useEffect(() => {
+    if (!user) {
+      setUserStreak(0);
+      return;
+    }
+    fetch('http://localhost:5015/api/problems/stats', {
+      headers: { 'X-User-Email': user.email }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data && typeof data.streak === 'number') {
+          setUserStreak(data.streak);
+        }
+      })
+      .catch(err => console.error('Error fetching user streak:', err));
+  }, [user, currentPage]);
 
   // Modal State
   const [activeModal, setActiveModal] = useState<ModalType>(null);
@@ -111,110 +140,147 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Animated Floating Neon Orbs for hand-crafted organic ambiance */}
-      <div className="neon-orb orb-1"></div>
-      <div className="neon-orb orb-2"></div>
-      <div className="neon-orb orb-3"></div>
+      <div className="noise-overlay"></div>
 
       {/* Navigation Header */}
-      <header className="navbar">
-        <a href="#" className="logo" onClick={() => navigateTo(user ? 'dashboard' : 'landing')}>
-          <Terminal size={24} style={{ color: 'var(--primary)' }} />
+      <header className="navbar" style={{ background: 'rgba(10, 10, 12, 0.7)', backdropFilter: 'var(--blur-amount)', borderBottom: '1px solid var(--border-color)' }}>
+        <a href="#" className="logo" onClick={() => navigateTo(user ? 'dashboard' : 'landing')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', textDecoration: 'none', fontWeight: 800 }}>
+          <Terminal size={20} style={{ color: 'var(--primary)' }} />
           PrepArena
         </a>
-
+        
         {user ? (
-          <nav className="nav-links">
-            <a 
-              href="#" 
-              className={`nav-link ${currentPage === 'dashboard' ? 'active' : ''}`}
-              onClick={() => navigateTo('dashboard')}
-            >
-              Dashboard
-            </a>
-            <a 
-              href="#" 
-              className={`nav-link ${currentPage === 'roadmap' ? 'active' : ''}`}
-              onClick={() => navigateTo('roadmap')}
-            >
-              Roadmap
-            </a>
-            <a 
-              href="#" 
-              className={`nav-link ${currentPage === 'problems' || currentPage === 'workspace' ? 'active' : ''}`}
-              onClick={() => navigateTo('problems')}
-            >
-              DSA Arena
-            </a>
-            <a 
-              href="#" 
-              className={`nav-link ${currentPage === 'interview' ? 'active' : ''}`}
-              onClick={() => navigateTo('interview')}
-            >
-              Interview Prep
-            </a>
-            {user.role === 'Admin' && (
+          <>
+            {/* Authenticated Navigation Links */}
+            <nav className="nav-links">
               <a 
                 href="#" 
-                className={`nav-link ${currentPage === 'admin' ? 'active' : ''}`}
-                onClick={() => navigateTo('admin')}
+                className={`nav-link ${currentPage === 'dashboard' ? 'active' : ''}`}
+                onClick={() => navigateTo('dashboard')}
               >
-                Admin Panel
+                Dashboard
               </a>
-            )}
-          </nav>
+              <a 
+                href="#" 
+                className={`nav-link ${currentPage === 'roadmap' ? 'active' : ''}`}
+                onClick={() => navigateTo('roadmap')}
+              >
+                Roadmap
+              </a>
+              <a 
+                href="#" 
+                className={`nav-link ${currentPage === 'problems' || currentPage === 'workspace' ? 'active' : ''}`}
+                onClick={() => navigateTo('problems')}
+              >
+                DSA Arena
+              </a>
+              <a 
+                href="#" 
+                className={`nav-link ${currentPage === 'interview' ? 'active' : ''}`}
+                onClick={() => navigateTo('interview')}
+              >
+                Interview Coach
+              </a>
+              <a 
+                href="#" 
+                className={`nav-link ${currentPage === 'leaderboard' ? 'active' : ''}`}
+                onClick={() => navigateTo('leaderboard')}
+              >
+                Leaderboard
+              </a>
+              <a 
+                href="#" 
+                className={`nav-link ${currentPage === 'prephub' ? 'active' : ''}`}
+                onClick={() => navigateTo('prephub')}
+                style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                PrepHub
+                <span style={{ background: 'var(--danger)', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 900, lineHeight: '1.2' }}>NEW</span>
+              </a>
+              {user.role === 'Admin' && (
+                <a 
+                  href="#" 
+                  className={`nav-link ${currentPage === 'admin' ? 'active' : ''}`}
+                  onClick={() => navigateTo('admin')}
+                >
+                  Admin Panel
+                </a>
+              )}
+            </nav>
+
+            {/* Authenticated User Stats & Widget */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {/* Streak info */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.15)', padding: '0.35rem 0.75rem', borderRadius: '8px', color: 'var(--warning)', fontSize: '0.8rem', fontWeight: 700 }}>
+                <Flame size={12} fill="var(--warning)" />
+                <span>{userStreak} {userStreak === 1 ? 'Day' : 'Days'}</span>
+              </div>
+
+              {/* User Avatar & Dropdown / Sign out */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', paddingLeft: '0.75rem', borderLeft: '1px solid var(--border-color)' }}>
+                <div style={{ 
+                  width: '28px', 
+                  height: '28px', 
+                  borderRadius: '50%', 
+                  background: 'linear-gradient(135deg, var(--primary) 0%, #4338ca 100%)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  fontSize: '0.8rem', 
+                  fontWeight: 900, 
+                  color: '#fff',
+                  border: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fff', lineHeight: '1.2' }}>{user.name}</span>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{user.role}</span>
+                </div>
+                <button 
+                  onClick={handleSignOut}
+                  className="nav-link"
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0.35rem 0.5rem', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                  onMouseOver={(e) => { e.currentTarget.style.color = 'var(--danger)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
+                  title="Sign Out"
+                >
+                  <LogOut size={14} />
+                </button>
+              </div>
+            </div>
+          </>
         ) : (
-          <nav className="nav-links">
-            <a href="#features" className="nav-link" onClick={() => navigateTo('landing')}>
-              Features
-            </a>
-            <a href="#" className="nav-link" onClick={() => navigateTo('auth')}>
-              Sign In
-            </a>
-          </nav>
-        )}
-
-        {user ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.03)', padding: '0.4rem 1rem', borderRadius: '2rem', border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-              <Flame size={14} style={{ color: 'var(--warning)' }} />
-              <span style={{ fontWeight: 700 }}>Streak: 5 Days</span>
-            </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              <UserIcon size={14} style={{ color: 'var(--primary)' }} />
-              <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{user.name}</span>
-            </div>
-
-            <button 
-              onClick={handleSignOut}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--text-muted)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                transition: 'color 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = 'var(--danger)'}
-              onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
-            >
-              <LogOut size={14} /> Sign Out
+          <>
+            {/* Unauthenticated Nav Links */}
+            <nav className="nav-links">
+              <a href="#features" className="nav-link" onClick={() => navigateTo('landing')}>
+                Features
+              </a>
+              <a href="#" className="nav-link" onClick={() => navigateTo('auth')}>
+                Sign In
+              </a>
+            </nav>
+            <button className="btn btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }} onClick={() => navigateTo('auth')}>
+              Get Started
             </button>
-          </div>
-        ) : (
-          <button className="btn btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }} onClick={() => navigateTo('auth')}>
-            Get Started
-          </button>
+          </>
         )}
       </header>
 
-      {/* Main Body */}
-      <main className="main-content">
+      {/* Main Viewport */}
+      <main 
+        className="main-content" 
+        style={{ 
+          flex: 1, 
+          padding: user ? '2.5rem 3rem 4rem' : 0, 
+          width: '100%', 
+          boxSizing: 'border-box', 
+          maxWidth: '100%',
+          marginLeft: 0,
+          transition: 'none'
+        }}
+      >
         {currentPage === 'landing' && (
           <LandingPage onGetStarted={() => navigateTo('auth')} />
         )}
@@ -222,10 +288,10 @@ export default function App() {
           <AuthPage onAuthSuccess={handleAuthSuccess} />
         )}
         {currentPage === 'dashboard' && (
-          <Dashboard onNavigate={(page, probId) => navigateTo(page as Page, probId)} />
+          <Dashboard onNavigate={(page, probId) => navigateTo(page as Page, probId)} currentUser={user} />
         )}
         {currentPage === 'roadmap' && (
-          <Roadmap onSelectProblem={(id) => navigateTo('workspace', id)} />
+          <Roadmap onSelectProblem={(id) => navigateTo('workspace', id)} currentUser={user} />
         )}
         {currentPage === 'problems' && (
           <ProblemsList 
@@ -243,16 +309,28 @@ export default function App() {
         {currentPage === 'interview' && (
           <InterviewPrep />
         )}
+        {currentPage === 'leaderboard' && (
+          <Leaderboard onNavigate={(page) => navigateTo(page as Page)} />
+        )}
+        {currentPage === 'prephub' && (
+          <PrepHub currentUser={user} onNavigate={navigateTo} />
+        )}
         {currentPage === 'admin' && user?.role === 'Admin' && (
           <AdminPanel currentUserEmail={user.email} />
         )}
       </main>
 
       {/* Pulsing Neon Shimmer Border Divider */}
-      <div className="footer-shimmer"></div>
+      <div className="footer-shimmer" style={{
+        marginLeft: 0,
+        transition: 'none'
+      }}></div>
 
       {/* Premium Multi-Column Footer */}
-      <footer className="footer-container">
+      <footer className="footer-container" style={{
+        marginLeft: 0,
+        transition: 'none'
+      }}>
         <div className="footer-grid">
           
           {/* Column 1: Brand & pitch */}
@@ -292,6 +370,11 @@ export default function App() {
               <li>
                 <span className="footer-link" onClick={() => navigateTo(user ? 'interview' : 'auth')}>
                   AI Interview Coach
+                </span>
+              </li>
+              <li>
+                <span className="footer-link" onClick={() => navigateTo(user ? 'prephub' : 'auth')}>
+                  PrepHub Student Suite
                 </span>
               </li>
             </ul>
