@@ -138,15 +138,21 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const isAuthPage = currentPage === 'auth';
+
   return (
     <div className="app-container">
       <div className="noise-overlay"></div>
 
       {/* Navigation Header */}
-      <header className="navbar" style={{ background: 'rgba(10, 10, 12, 0.7)', backdropFilter: 'var(--blur-amount)', borderBottom: '1px solid var(--border-color)' }}>
-        <a href="#" className="logo" onClick={() => navigateTo(user ? 'dashboard' : 'landing')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fff', textDecoration: 'none', fontWeight: 800 }}>
-          <Terminal size={20} style={{ color: 'var(--primary)' }} />
-          PrepArena
+      <header className="navbar" style={{ 
+        background: isAuthPage ? 'rgba(250, 250, 250, 0.8)' : 'rgba(10, 10, 12, 0.7)', 
+        backdropFilter: 'var(--blur-amount)', 
+        borderBottom: isAuthPage ? '1px solid #e4e4e7' : '1px solid var(--border-color)',
+        transition: 'all 0.3s'
+      }}>
+        <a href="#" className="logo" onClick={() => navigateTo(user ? 'dashboard' : 'landing')} style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+          <img src="/logo.png" className={isAuthPage ? "" : "logo-inverted"} style={{ height: '32px', objectFit: 'contain' }} alt="PrepArena" />
         </a>
         
         {user ? (
@@ -155,42 +161,42 @@ export default function App() {
             <nav className="nav-links">
               <a 
                 href="#" 
-                className={`nav-link ${currentPage === 'dashboard' ? 'active' : ''}`}
+                className={`nav-link ${currentPage === 'dashboard' ? 'active' : ''} ${isAuthPage ? 'auth-nav-link' : ''}`}
                 onClick={() => navigateTo('dashboard')}
               >
                 Dashboard
               </a>
               <a 
                 href="#" 
-                className={`nav-link ${currentPage === 'roadmap' ? 'active' : ''}`}
+                className={`nav-link ${currentPage === 'roadmap' ? 'active' : ''} ${isAuthPage ? 'auth-nav-link' : ''}`}
                 onClick={() => navigateTo('roadmap')}
               >
                 Roadmap
               </a>
               <a 
                 href="#" 
-                className={`nav-link ${currentPage === 'problems' || currentPage === 'workspace' ? 'active' : ''}`}
+                className={`nav-link ${currentPage === 'problems' || currentPage === 'workspace' ? 'active' : ''} ${isAuthPage ? 'auth-nav-link' : ''}`}
                 onClick={() => navigateTo('problems')}
               >
                 DSA Arena
               </a>
               <a 
                 href="#" 
-                className={`nav-link ${currentPage === 'interview' ? 'active' : ''}`}
+                className={`nav-link ${currentPage === 'interview' ? 'active' : ''} ${isAuthPage ? 'auth-nav-link' : ''}`}
                 onClick={() => navigateTo('interview')}
               >
                 Interview Coach
               </a>
               <a 
                 href="#" 
-                className={`nav-link ${currentPage === 'leaderboard' ? 'active' : ''}`}
+                className={`nav-link ${currentPage === 'leaderboard' ? 'active' : ''} ${isAuthPage ? 'auth-nav-link' : ''}`}
                 onClick={() => navigateTo('leaderboard')}
               >
                 Leaderboard
               </a>
               <a 
                 href="#" 
-                className={`nav-link ${currentPage === 'prephub' ? 'active' : ''}`}
+                className={`nav-link ${currentPage === 'prephub' ? 'active' : ''} ${isAuthPage ? 'auth-nav-link' : ''}`}
                 onClick={() => navigateTo('prephub')}
                 style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
               >
@@ -200,7 +206,7 @@ export default function App() {
               {user.role === 'Admin' && (
                 <a 
                   href="#" 
-                  className={`nav-link ${currentPage === 'admin' ? 'active' : ''}`}
+                  className={`nav-link ${currentPage === 'admin' ? 'active' : ''} ${isAuthPage ? 'auth-nav-link' : ''}`}
                   onClick={() => navigateTo('admin')}
                 >
                   Admin Panel
@@ -239,7 +245,7 @@ export default function App() {
                 </div>
                 <button 
                   onClick={handleSignOut}
-                  className="nav-link"
+                  className={`nav-link ${isAuthPage ? 'auth-nav-link' : ''}`}
                   style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', padding: '0.35rem 0.5rem', border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
                   onMouseOver={(e) => { e.currentTarget.style.color = 'var(--danger)'; }}
                   onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
@@ -254,14 +260,18 @@ export default function App() {
           <>
             {/* Unauthenticated Nav Links */}
             <nav className="nav-links">
-              <a href="#features" className="nav-link" onClick={() => navigateTo('landing')}>
+              <a href="#features" className={`nav-link ${isAuthPage ? 'auth-nav-link' : ''}`} onClick={() => navigateTo('landing')}>
                 Features
               </a>
-              <a href="#" className="nav-link" onClick={() => navigateTo('auth')}>
+              <a href="#" className={`nav-link ${isAuthPage ? 'auth-nav-link' : ''}`} onClick={() => navigateTo('auth')}>
                 Sign In
               </a>
             </nav>
-            <button className="btn btn-primary" style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem' }} onClick={() => navigateTo('auth')}>
+            <button 
+              className={isAuthPage ? "auth-btn-primary" : "btn btn-primary"} 
+              style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', width: 'auto', marginTop: 0 }} 
+              onClick={() => navigateTo('auth')}
+            >
               Get Started
             </button>
           </>
@@ -321,170 +331,91 @@ export default function App() {
       </main>
 
       {/* Pulsing Neon Shimmer Border Divider */}
-      <div className="footer-shimmer" style={{
-        marginLeft: 0,
-        transition: 'none'
-      }}></div>
+      {!isAuthPage && (
+        <div className="footer-shimmer" style={{
+          marginLeft: 0,
+          transition: 'none'
+        }}></div>
+      )}
 
       {/* Premium Multi-Column Footer */}
-      <footer className="footer-container" style={{
-        marginLeft: 0,
-        transition: 'none'
-      }}>
-        <div className="footer-grid">
-          
-          {/* Column 1: Brand & pitch */}
-          <div className="footer-col">
-            <a href="#" className="logo" onClick={() => navigateTo(user ? 'dashboard' : 'landing')} style={{ fontSize: '1.4rem', alignSelf: 'flex-start' }}>
-              <Terminal size={20} style={{ color: 'var(--primary)' }} />
-              PrepArena
-            </a>
-            <p style={{ fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text-muted)' }}>
-              Next-generation coding workspace and AI mock interview panels. Built for developers preparing to step into top tech companies.
-            </p>
-            <div className="social-links">
-              <button className="social-btn" aria-label="GitHub">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
-              </button>
-              <button className="social-btn" aria-label="Twitter">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
-              </button>
-              <button className="social-btn" aria-label="Discord"><MessageCircle size={16} /></button>
-            </div>
-          </div>
-
-          {/* Column 2: Navigation Links */}
-          <div className="footer-col">
-            <h4 className="footer-col-title">Platform</h4>
-            <ul className="footer-links-list">
-              <li>
-                <span className="footer-link" onClick={() => navigateTo(user ? 'roadmap' : 'auth')}>
-                  LeetCode Roadmap
-                </span>
-              </li>
-              <li>
-                <span className="footer-link" onClick={() => navigateTo(user ? 'problems' : 'auth')}>
-                  DSA Practice Arena
-                </span>
-              </li>
-              <li>
-                <span className="footer-link" onClick={() => navigateTo(user ? 'interview' : 'auth')}>
-                  AI Interview Coach
-                </span>
-              </li>
-              <li>
-                <span className="footer-link" onClick={() => navigateTo(user ? 'prephub' : 'auth')}>
-                  PrepHub Student Suite
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Legal & Docs */}
-          <div className="footer-col">
-            <h4 className="footer-col-title">Legal</h4>
-            <ul className="footer-links-list">
-              <li>
-                <span className="footer-link" onClick={() => setActiveModal('privacy')}>
-                  Privacy Policy
-                </span>
-              </li>
-              <li>
-                <span className="footer-link" onClick={() => setActiveModal('terms')}>
-                  Terms of Service
-                </span>
-              </li>
-              <li>
-                <span className="footer-link" onClick={() => setActiveModal('contact')}>
-                  Support Helpdesk
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Newsletter & Contact */}
-          <div className="footer-col">
-            <h4 className="footer-col-title">Stay Updated</h4>
-            <p style={{ fontSize: '0.8rem', lineHeight: '1.5' }}>Subscribe to get coding tips and Top 150 questions breakdowns.</p>
+      {!isAuthPage && (
+        <footer className="footer-container" style={{
+          marginLeft: 0,
+          transition: 'none'
+        }}>
+          <div className="footer-grid">
             
-            <form onSubmit={handleNewsletterSubmit} style={{ display: 'flex', gap: '0.5rem', position: 'relative' }}>
-              <input
-                type="email"
-                required
-                placeholder="developer@domain.com"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                style={{
-                  flex: 1,
-                  background: 'rgba(0,0,0,0.3)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '0.5rem',
-                  padding: '0.5rem 0.75rem',
-                  color: '#fff',
-                  fontSize: '0.8rem',
-                  outline: 'none'
-                }}
-              />
-              <button 
-                type="submit" 
-                className="btn btn-primary" 
-                style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', borderRadius: '0.5rem' }}
-                disabled={newsletterSubscribed}
-              >
-                {newsletterSubscribed ? <Check size={14} /> : 'Join'}
-              </button>
-            </form>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Mail size={12} style={{ color: 'var(--primary)' }} />
-                <span>support@preparena.dev</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <MapPin size={12} style={{ color: 'var(--primary)' }} />
-                <span>San Francisco, CA</span>
+            {/* Column 1: Brand & pitch */}
+            <div className="footer-col">
+              <a href="#" className="logo" onClick={() => navigateTo(user ? 'dashboard' : 'landing')} style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center' }}>
+                <img src="/logo.png" className="logo-inverted" style={{ height: '36px', objectFit: 'contain' }} alt="PrepArena" />
+              </a>
+              <p style={{ fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text-muted)' }}>
+                Next-generation coding workspace and AI mock interview panels. Built for developers preparing to step into top tech companies.
+              </p>
+              <div className="social-links">
+                <button className="social-btn" aria-label="GitHub">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+                </button>
+                <button className="social-btn" aria-label="Twitter">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
+                </button>
+                <button className="social-btn" aria-label="Discord"><MessageCircle size={16} /></button>
               </div>
             </div>
+
+            {/* Column 2: Navigation Links */}
+            <div className="footer-col">
+              <h4 className="footer-col-title">Platform</h4>
+              <ul className="footer-links-list">
+                <li>
+                  <span className="footer-link" onClick={() => navigateTo(user ? 'roadmap' : 'auth')}>
+                    LeetCode Roadmap
+                  </span>
+                </li>
+                <li>
+                  <span className="footer-link" onClick={() => navigateTo(user ? 'problems' : 'auth')}>
+                    DSA Practice Arena
+                  </span>
+                </li>
+                <li>
+                  <span className="footer-link" onClick={() => navigateTo(user ? 'interview' : 'auth')}>
+                    AI Interview Coach
+                  </span>
+                </li>
+                <li>
+                  <span className="footer-link" onClick={() => navigateTo(user ? 'prephub' : 'auth')}>
+                    PrepHub Student Suite
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Legal & Docs */}
+            <div className="footer-col">
+              <h4 className="footer-col-title">Legal</h4>
+              <ul className="footer-links-list">
+                <li>
+                  <span className="footer-link" onClick={() => setActiveModal('privacy')}>
+                    Privacy Policy
+                  </span>
+                </li>
+                <li>
+                  <span className="footer-link" onClick={() => setActiveModal('terms')}>
+                    Terms of Service
+                  </span>
+                </li>
+                <li>
+                  <span className="footer-link" onClick={() => setActiveModal('contact')}>
+                    Support Helpdesk
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
-
-        </div>
-
-        {/* Footer Bottom Row */}
-        <div className="footer-bottom">
-          <span>
-            PrepArena DSA Systems © 2026. Hand-crafted with dynamic micro-animations.
-          </span>
-          <button 
-            onClick={scrollToTop}
-            style={{
-              background: 'rgba(255,255,255,0.02)',
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-muted)',
-              padding: '0.5rem 0.75rem',
-              borderRadius: '0.5rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              transition: 'all 0.2s'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.borderColor = 'var(--primary)';
-              e.currentTarget.style.color = '#fff';
-              e.currentTarget.style.boxShadow = '0 0 10px var(--primary-glow)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.borderColor = 'var(--border-color)';
-              e.currentTarget.style.color = 'var(--text-muted)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <ChevronUp size={12} /> Back to Top
-          </button>
-        </div>
-      </footer>
+        </footer>
+      )}
 
       {/* ================= MODAL OVERLAYS ================= */}
 

@@ -81,11 +81,11 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
         </div>
         
         <h1 style={{ fontSize: '3.75rem', fontWeight: 900, lineHeight: '1.1', maxWidth: '850px', letterSpacing: '-0.04em', margin: 0, color: '#fff' }}>
-          Master Algorithms and Conquer Your Next <span className="text-gradient-violet">Technical Interview</span>
+          Stop Memorizing LeetCode. Build Core <span className="text-gradient-violet">Engineering Intuition</span>.
         </h1>
         
-        <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', lineHeight: '1.6', fontWeight: 500 }}>
-          Compile in 6 major languages, follow the LeetCode Top 150 sequentially, and receive feedback from our automated AI interview coach.
+        <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '650px', lineHeight: '1.6', fontWeight: 500 }}>
+          PrepArena is a fully-featured algorithmic sandbox designed to build true problem-solving intuition. Compile in 6 languages, trace curations visually, scan resumes for gaps, and train memory patterns — all 100% free.
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -200,9 +200,9 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             <div style={{ background: '#0a0a0c', color: 'var(--primary)', padding: '0.75rem', borderRadius: '8px', alignSelf: 'flex-start', border: '1px solid var(--border-color)' }}>
               <Cpu size={18} />
             </div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>6 Compiler Toolchains</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>6 Sandbox Compilers</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
-              Run and evaluate code locally in C#, Java, Python, C, C++, and JavaScript. Auto-detects local compilers inside transient process sandboxes.
+              Write, compile, and run code instantly in C#, Java, Python, C++, C, and JavaScript inside local browser sandboxes.
             </p>
           </div>
 
@@ -211,59 +211,88 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             <div style={{ background: '#0a0a0c', color: 'var(--primary)', padding: '0.75rem', borderRadius: '8px', alignSelf: 'flex-start', border: '1px solid var(--border-color)' }}>
               <Award size={18} />
             </div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>Top 150 Roadmap</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>Curated Top 150 Targets</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
-              Ascend a visual winding mountain path mapping 150 top-tier interview targets. Track stars, unlock worlds, and face the final DP portal.
+              Ascend a visual mountain path mapping 150 top-tier interview questions. Unlock progress worlds and track achievements.
             </p>
           </div>
 
-          {/* Card 3: AI Interview Coach */}
+          {/* Card 3: AI Resume Gap Scanner */}
+          <div className="cyber-panel cyber-panel-hover" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', gridColumn: 'span 1' }}>
+            <div style={{ background: '#0a0a0c', color: 'var(--primary)', padding: '0.75rem', borderRadius: '8px', alignSelf: 'flex-start', border: '1px solid var(--border-color)' }}>
+              <CheckCircle2 size={18} />
+            </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>AI Resume Gap Scanner</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
+              Drag and drop your CV to instantly scan for algorithmic topic gaps and skills missing from top company hiring bars.
+            </p>
+          </div>
+
+          {/* Card 4: AI Coding Tutor Coach */}
+          <div className="cyber-panel cyber-panel-hover" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem', gridColumn: 'span 2' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.4rem', color: '#818cf8', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1.5px' }}>
+                <Sparkles size={11} /> Co-Pilot Code Mentor
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', margin: 0 }}>AI Pair Programming Coach</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
+                Get real-time line-by-line support, time-space complexity metrics, logic dry runs, and refactoring tips from our integrated AI coding tutor.
+              </p>
+            </div>
+            <div style={{ background: '#030303', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.7rem' }}>
+              <div style={{ color: 'var(--text-muted)' }}>[Coach]: Recursion time is O(2^N). Let's optimize it.</div>
+              <div style={{ color: '#818cf8' }}>➔ Try memoization with a cache array.</div>
+              <div style={{ color: 'var(--success)' }}>✓ Optimized to O(N) complexity!</div>
+            </div>
+          </div>
+
+          {/* Card 5: Spaced Repetition Cards */}
+          <div className="cyber-panel cyber-panel-hover" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', gridColumn: 'span 1' }}>
+            <div style={{ background: '#0a0a0c', color: 'var(--primary)', padding: '0.75rem', borderRadius: '8px', alignSelf: 'flex-start', border: '1px solid var(--border-color)' }}>
+              <BookOpen size={18} />
+            </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>Spaced Repetition Recall</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
+              Train and lock in core patterns (Sliding Window, Trees DFS, Dynamic Programming) with interactive recall cards.
+            </p>
+          </div>
+
+          {/* Card 6: AI Mock Interview Panels */}
           <div className="cyber-panel cyber-panel-hover" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', gridColumn: 'span 1' }}>
             <div style={{ background: '#0a0a0c', color: 'var(--primary)', padding: '0.75rem', borderRadius: '8px', alignSelf: 'flex-start', border: '1px solid var(--border-color)' }}>
               <Terminal size={18} />
             </div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>AI Interview Coach</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>AI Mock Interview Panels</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
-              Mock interview calls featuring System Design, Behavioral, and C#/.NET tracks. Evaluates transcripts objectively using STAR framework metrics.
+              Simulate chat/voice interview rooms covering C# Core, System Design, and Behavioral tracks using STAR standards.
             </p>
           </div>
 
-          {/* Card 4: Student PrepHub (Spans 2 columns for asymmetry) */}
+          {/* Card 7: Competitive Leaderboard */}
           <div className="cyber-panel cyber-panel-hover" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem', gridColumn: 'span 2' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
-              <div style={{ display: 'flex', gap: '0.4rem', color: '#818cf8', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1.5px' }}>
-                <Sparkles size={11} /> Student Exclusive Portal
+              <div style={{ display: 'flex', gap: '0.4rem', color: '#fbbf24', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1.5px' }}>
+                <Users size={11} style={{ color: '#fbbf24' }} /> Competitive Rankings
               </div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', margin: 0 }}>PrepHub Student Suite</h3>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', margin: 0 }}>Esports-Style Leaderboards</h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
-                A powerful workspace containing an **AI Resume Gap Analyzer** with direct drag-and-drop file scanning, **spaced repetition concept flashcards** to capture patterns, and **AI pair programming companions** to dry run logic.
+                Compete with other student developers on streaks, podium medals, and daily challenges to track your competitive standing.
               </p>
             </div>
-            <div style={{ background: '#030303', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', justifyContent: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#fff' }}>
-                <CheckCircle2 size={12} style={{ color: 'var(--success)' }} />
-                <span>Resume scan and matches</span>
+            <div style={{ background: '#030303', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', padding: '0.25rem 0.5rem', background: 'rgba(251, 191, 36, 0.05)', borderRadius: '4px' }}>
+                <span style={{ color: '#fbbf24', fontWeight: 700 }}>#1 eshwar 👑</span>
+                <span style={{ color: 'var(--text-muted)' }}>125 Solved</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#fff' }}>
-                <BookOpen size={12} style={{ color: 'var(--primary)' }} />
-                <span>Spaced repetition recall</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>
+                <span style={{ color: '#fff' }}>#2 alphaDev</span>
+                <span style={{ color: 'var(--text-muted)' }}>110 Solved</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', color: '#fff' }}>
-                <Users size={12} style={{ color: '#fbbf24' }} />
-                <span>Co-coding companion chat</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>
+                <span style={{ color: '#fff' }}>#3 coderX</span>
+                <span style={{ color: 'var(--text-muted)' }}>98 Solved</span>
               </div>
             </div>
-          </div>
-
-          {/* Card 5: Competitive Leaderboard */}
-          <div className="cyber-panel cyber-panel-hover" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', gridColumn: 'span 1' }}>
-            <div style={{ background: '#0a0a0c', color: 'var(--primary)', padding: '0.75rem', borderRadius: '8px', alignSelf: 'flex-start', border: '1px solid var(--border-color)' }}>
-              <Users size={18} />
-            </div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', margin: 0 }}>Global Leaderboard</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: '1.5', margin: 0 }}>
-              Compete directly with the student developer community. Track streaks, podium rankings, and difficulty stats in real time.
-            </p>
           </div>
 
         </div>
